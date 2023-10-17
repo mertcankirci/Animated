@@ -23,3 +23,20 @@ extension View {
         clipShape( RoundedCorner(radius: radius, corners: corners) )
     }
 }
+
+extension View {
+  @ViewBuilder func applyTextColor(_ color: Color) -> some View {
+    if UITraitCollection.current.userInterfaceStyle == .light {
+      self.colorInvert().colorMultiply(color)
+    } else {
+        self.colorInvert().colorMultiply(color)
+    }
+  }
+}
+
+
+extension View {
+    func KeyboardAwarePadding() -> some View {
+        ModifiedContent(content: self, modifier: KeyboardAwareModifier())
+    }
+}

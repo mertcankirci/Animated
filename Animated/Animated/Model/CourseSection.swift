@@ -13,11 +13,11 @@ struct CourseSection: Identifiable {
     var caption: String
     var color: Color
     var image: Image
+    var isLocked: Bool
 }
 
 var courseSections = [
-    CourseSection(title: "State Machine", caption: "Watch video - 15 mins", color: Color(hex: 0x9CC5FF), image: Image("Topic 2")),
-    CourseSection(title: "Animated Menu", caption: "Watch video - 10 mins", color: Color(hex: 0x6E6AE8), image: Image("Topic 1")),
-    CourseSection(title: "Tab Bar", caption: "Watch video - 8 mins", color: Color(hex: 0x005FE7), image: Image("Topic 2")),
-    CourseSection(title: "Button", caption: "Watch video - 9 mins", color: Color(hex: 0xBBA6FF), image: Image("Topic 1"))
+    CourseSection(title: "Horoscope Sign", caption: "Look into your past favourite horoscope fortunes", color: Color(hex: 0x6E6AE8), image: Image("planet"), isLocked: false),
+    CourseSection(title: "Cookie Fortune", caption: "Read your past cookie fortunes again", color: Color(hex: 0x9CC5FF), image: Image("cookie"), isLocked: false),
+    CourseSection(title: "Tarot Card", caption: "Look into your past Tarot fortunes", color: Color(hex: 0x005FE7), image: Image("Topic 2"), isLocked: true),
 ]

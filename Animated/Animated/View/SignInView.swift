@@ -10,23 +10,23 @@ import RiveRuntime
 
 struct SignInView: View {
     
-    @State var email = ""
-    @State var password = ""
-    @State var isLoading = false
     @Binding var showModel: Bool
     let check = RiveViewModel(fileName: "check" , stateMachineName: "State Machine 1")
     let confetti = RiveViewModel(fileName: "confetti", stateMachineName: "State Machine 1")
+    @Binding var didSignIn: Bool
+    @EnvironmentObject var loginViewModel: LoginViewModel
+    @EnvironmentObject var registerVM: RegisterViewModel
     
     func logIn() {
-        isLoading = true
         
-        if email != "" {
+        //MARK: BUG VAR COZ
+        if loginViewModel.isAuth {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 check.triggerInput("Check")
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.8) {
-                isLoading = false
+                loginViewModel.isLoading = false
                 confetti.triggerInput("Trigger explosion")
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
@@ -36,43 +36,82 @@ struct SignInView: View {
             }
         }
         
+        
         else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 check.triggerInput("Error")
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.8) {
-                isLoading = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.1) {
+                loginViewModel.isLoading = false
+            }
+        }
+    }
+    
+    func didRegister() {
+        if registerVM.isRegister == true {
+            withAnimation(.spring()) {
+                showModel = false
             }
         }
     }
     
     
     var body: some View {
+        ZStack {
+            
+            content
+            
+            if loginViewModel.isSignUp {
+                SignUpView(didSignIn: $didSignIn, showModal: $showModel)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .zIndex(2)
+                    .environmentObject(loginViewModel)
+                    .environmentObject(RegisterViewModel())
+                    .environmentObject(LocationService())
+                    .onDisappear {
+                        didRegister()
+                    }
+                    
+                    
+                    
+            }
+        }
+    }
+    
+    var content: some View {
         VStack(spacing: 24) {
             Text("Sign In")
                 .customFont(.largeTitle)
-            Text("Access to 240+ hours of content. Learn design and code, by building real apps with React and Swift.")
+            Text("Embark on an Enchanting Journey of Discovery! Crack the Open Feature and Unleash a World of Wonders. Welcome to a Realm Where Innovation and Imagination Unite, Awaiting Your Curiosity!")
                 .customFont(.headline)
             
             VStack(alignment: .leading) {
                 Text("Email")
                     .customFont(.subheadline)
                     .foregroundColor(.secondary)
-                TextField("", text: $email)
-                    .customTextField()
+                TextField("", text: $loginViewModel.username)
+                    .customTextField(image: Image("Icon Email"))
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
             }
             
             VStack(alignment: .leading ) {
                 Text("Password")
                     .customFont(.subheadline)
                     .foregroundColor(.secondary)
-                SecureField("", text: $password)
+                SecureField("", text: $loginViewModel.password)
                     .customTextField(image: Image("Icon Lock"))
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
                     
             }
             
             Button {
-                logIn()
+                loginViewModel.isLoading = true
+                loginViewModel.login()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    logIn()
+                }
             } label: {
                 Label("Sign In", systemImage: "arrow.right")
                     .customFont(.headline)
@@ -98,16 +137,41 @@ struct SignInView: View {
             }
             
             
-            Text("Sign up with Email, Apple or Google")
-                .customFont(.subheadline)
-                .foregroundColor(.secondary)
-            
             HStack {
-                Image("Logo Email")
+                
                 Spacer()
                 Image("Logo Apple")
                 Spacer()
                 Image("Logo Google")
+                Spacer()
+            }
+            
+            HStack {
+                Rectangle()
+                    .frame(height: 1)
+                    .opacity(0.1)
+                Text("Don't have an account ?")
+                    .customFont(.subheadline2)
+                    .foregroundColor(.black.opacity(0.3))
+                    .fixedSize(horizontal: true, vertical: false)
+                Rectangle()
+                    .frame(height: 1)
+                    .opacity(0.1)
+            }
+            
+            Button {
+                withAnimation(.spring()) {
+                    loginViewModel.isSignUp = true
+                }
+            } label: {
+                Label("Sign Up", systemImage: "arrow.up")
+                    .customFont(.headline)
+                    .padding(20)
+                    .background(Color(hex: 0xf77d8e))
+                    .foregroundColor(.white)
+                    .cornerRadius(20, corners: [.topRight, .bottomLeft, .bottomRight])
+                    .cornerRadius(8, corners: [.topLeft])
+                .shadow(color: Color(hex: 0xf77d8e).opacity(0.5), radius: 20, x: 0, y: 10)
             }
         }
         .padding(30)
@@ -122,7 +186,7 @@ struct SignInView: View {
         .padding()
         .overlay(
             ZStack {
-                if isLoading {
+                if loginViewModel.isLoading {
                     check.view()
                         .frame(width: 100, height: 100)
                         .allowsHitTesting(false)
@@ -137,6 +201,8 @@ struct SignInView: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView(showModel: .constant(false))
+        SignInView(showModel: .constant(false), didSignIn: .constant(false))
+            .environmentObject(LoginViewModel())
+            .environmentObject(RegisterViewModel())
     }
 }

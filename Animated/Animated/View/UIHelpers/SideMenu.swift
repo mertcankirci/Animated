@@ -55,7 +55,7 @@ struct SideMenu: View {
             }
             .padding(8)
             
-            Text("HISTORY")
+            Text("OTHER")
                 .customFont(.subheadline2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
@@ -75,25 +75,6 @@ struct SideMenu: View {
             }
             .padding(8)
             
-            HStack(spacing: 14) {
-                menuItems3[0].icon.view()
-                    .frame(width: 32, height:32)
-                    .opacity(0.6)
-                    .onChange(of: darkMode) { new in
-                        if new == true {
-                            menuItems3[0].icon.setInput("active", value: true)
-                        }
-                        else {
-                            menuItems3[0].icon.setInput("active", value: false)
-                        }
-                    }
-                
-                Text(menuItems3[0].text)
-                    .customFont(.headline)
-                
-                Toggle("", isOn: $darkMode)
-            }
-            .padding(20)
             
             Spacer()
         }
@@ -115,18 +96,12 @@ struct SideMenu_Previews: PreviewProvider {
 
 var menuItems = [
     MenuItem(text: "Home", icon: RiveViewModel(fileName: "icons", stateMachineName: "HOME_interactivity", artboardName: "HOME"), menu: .home),
-    MenuItem(text: "Search", icon: RiveViewModel(fileName: "icons", stateMachineName: "SEARCH_Interactivity", artboardName: "SEARCH"), menu: .search),
     MenuItem(text: "Favourites", icon: RiveViewModel(fileName: "icons", stateMachineName: "STAR_Interactivity", artboardName: "LIKE/STAR"), menu: .favourites),
-    MenuItem(text: "Help", icon: RiveViewModel(fileName: "icons", stateMachineName: "CHAT_Interactivity", artboardName: "CHAT"), menu: .help),
-    
 ]
 
 var menuItems2 = [
-    MenuItem(text: "History", icon: RiveViewModel(fileName: "icons", stateMachineName: "TIMER_Interactivity", artboardName: "TIMER"), menu: .history),
     MenuItem(text: "Notifications", icon: RiveViewModel(fileName: "icons", stateMachineName: "BELL_Interactivity", artboardName: "BELL"), menu: .notifications),
+    MenuItem(text: "Settings", icon: RiveViewModel(fileName: "icons", stateMachineName: "SETTINGS_Interactivity", artboardName: "SETTINGS"), menu: .darkmode),
     
 ]
 
-var menuItems3 = [
-    MenuItem(text: "Dark Mode", icon: RiveViewModel(fileName: "icons", stateMachineName: "SETTINGS_Interactivity", artboardName: "SETTINGS"), menu: .darkmode),
-]

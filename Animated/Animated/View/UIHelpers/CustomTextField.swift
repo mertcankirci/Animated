@@ -34,8 +34,36 @@ struct CustomTextField: ViewModifier {
     }
 }
 
+struct SignUpTextField: ViewModifier {
+    
+    func body(content: Content) -> some View {
+        content
+            .padding(.leading, 100)
+            .padding(20)
+            .background(.white)
+            .mask(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke()
+                    .fill(Color(hex: 0xf77d8e))
+                    .padding(20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: 0xf77d8e))
+                    .foregroundColor(.black)
+                    .cornerRadius(20, corners: [.topRight, .bottomLeft, .bottomRight])
+                    .cornerRadius(8, corners: [.topLeft])
+            )
+    }
+    
+}
+
 extension View {
-    func customTextField(image: Image = Image("Icon Email")) -> some View {
+    func customTextField(image: Image) -> some View {
         modifier(CustomTextField(image: image))
     }
+    
+    func signUpTextField() -> some View {
+        modifier(SignUpTextField())
+    }
 }
+
+

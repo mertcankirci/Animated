@@ -10,12 +10,12 @@ import SwiftUI
 @main
 struct AnimatedApp: App {
     
-    let tabSelection = TabSelectionManager()
 
         var body: some Scene {
             WindowGroup {
-                ContentView()
-                    .environmentObject(tabSelection)
+                ContentView(type: .tarot)
+                    .environmentObject(LocationService())
+                    .environmentObject(ChooseModeViewModel())
             }
     }
 }

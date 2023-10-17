@@ -12,84 +12,131 @@ struct OnboardingView: View {
     
     let button = RiveViewModel(fileName: "button")
     @State var showModal = false
+    @State var didSignIn = false
     @Binding var show: Bool
+    @StateObject var loginViewModel = LoginViewModel()
+    @EnvironmentObject var registerVM: RegisterViewModel
+    
     
     var body: some View {
-        
-        ZStack {
-            background
-            
-            content
-                .offset(y: showModal ? -50: 0)
-            
-            Color("Shadow")
-                .opacity(showModal ? 0.3 : 0.0)
-                .ignoresSafeArea()
-            
-            if showModal {
-                SignInView(showModel: $showModal)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .overlay(
-                        
-                        Button {
-                            withAnimation(.spring()) {
-                                showModal = false
+        //MARK: Burada bi sikinti var onu coz
+                
+            ZStack {
+
+                
+                background
+                    
+                
+                content
+                    .offset(y: showModal ? -50: 0)
+
+                
+                Color("Shadow")
+                    .opacity(showModal ? 0.3 : 0.0)
+                    .ignoresSafeArea()
+                
+                if didSignIn {
+                    ProfileView()
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding()
+                        .overlay(
+                            
+                            Button {
+                                withAnimation(.spring()) {
+                                    show = false
+                                }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .frame(width: 36, height: 36)
+                                    .foregroundColor(.black)
+                                    .background(.white)
+                                    .mask(Circle())
+                                    .shadow(color: Color("Shadow").opacity(0.3), radius: 5, x: 0, y: 3)
                             }
-                        } label: {
-                            Image(systemName: "xmark")
-                                .frame(width: 36, height: 36)
-                                .foregroundColor(.black)
-                                .background(.white)
-                                .mask(Circle())
-                                .shadow(color: Color("Shadow").opacity(0.3), radius: 5, x: 0, y: 3)
-                        }
-                            .frame(maxHeight: .infinity, alignment: .bottom)
-                    )
-                    .zIndex(1)
-            }
-            
-            Button {
-                withAnimation {
-                    show = false
+                                .frame(maxHeight: .infinity, alignment: .bottom)
+                        )
+                        .zIndex(1)
+                        .environmentObject(LoginViewModel())
+                        .environmentObject(registerVM)
                 }
                 
-            } label: {
-                Image(systemName: "xmark")
-                    .frame(width: 36, height: 36)
-                    .background(.black)
-                    .foregroundColor(.white)
-                    .mask(Circle())
-                    .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 10)
+                else {
+                    SignInView(showModel: $showModal, didSignIn: $didSignIn)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding()
+                        .overlay(
+                            
+                            Button {
+                                withAnimation(.spring()) {
+                                    showModal = false
+                                }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .frame(width: 36, height: 36)
+                                    .foregroundColor(.black)
+                                    .background(.white)
+                                    .mask(Circle())
+                                    .shadow(color: Color("Shadow").opacity(0.3), radius: 5, x: 0, y: 3)
+                            }
+                                .frame(maxHeight: .infinity, alignment: .bottom)
+                        )
+                        .zIndex(1)
+                        .onDisappear(perform: {
+                        
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 4.1) {
+                                print("Register bu \(registerVM.isRegister)")
+                            }
+                        })
+                        .environmentObject(LoginViewModel())
+                        .environmentObject(registerVM)
+                        .environmentObject(LocationService())
+                }
+                
+                
+                Button {
+                    withAnimation {
+                        show = false
+                    }
+                    
+                } label: {
+                    Image(systemName: "xmark")
+                        .frame(width: 36, height: 36)
+                        .background(.white)
+                        .foregroundColor(.black)
+                        .mask(Circle())
+                        .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 10)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .padding(20)
+                .padding(.trailing, 20)
+                .offset(y: showModal ? -200 : 80)
+                
+                
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-            .padding(20)
-            .padding(.trailing, 20)
-            .offset(y: showModal ? -200 : 80)
-            
-            
-        }
+        
     }
     
     var background: some View {
-        RiveViewModel(fileName: "shapes").view()
-            .ignoresSafeArea()
-            .blur(radius: 30)
-            .background(
-                Image("Spline")
-                    .blur(radius: 50)
-                    .offset(x: 200, y: 100)
-            )
+      
+            RiveViewModel(fileName: "space_coffee").view()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+            
+            
     }
     
     var content : some View {
         VStack(alignment: .leading, spacing: 16) {
             
-            Text("Learn design & code")
-                .font(.custom("Poppins Bold", size: 60, relativeTo: .largeTitle))
+            Text("Crack Open the Future.")
+                .font(.custom("Poppins Bold", size: 55, relativeTo: .largeTitle))
                 .frame(width: 260, alignment: .leading)
+                .foregroundColor(.white)
+                
             
-            Text("Don't skip design. Learn design and code, by building real apps with React and Swift. Complete courses about best tools")
+            Text("Embark on an Enchanting Journey of Discovery! Crack the Open Feature and Unleash a World of Wonders. Unravel the Secrets Within and Experience a New Dimension of Possibilities. Welcome to a Realm Where Innovation and Imagination Unite, Awaiting Your Curiosity to Be Explored!")
                 .customFont(.body)
+                .foregroundColor(.white)
                 .opacity(0.7)
                 .frame(width: 366)
                 
@@ -98,7 +145,7 @@ struct OnboardingView: View {
             button.view()
                 .frame(width: 236, height: 64)
                 .overlay(
-                    Label("Start the course", systemImage: "arrow.forward")
+                    Label("Get Started", systemImage: "arrow.forward")
                         .offset(x:4 , y:4)
                         .font(.headline)
                 )
@@ -118,10 +165,12 @@ struct OnboardingView: View {
                     }
             }
             
-            Text("Purchase includes access to 30+ courses, 240+ premium tutorials, 120+ hours of videos, source files and certificate")
+            Text("Purchase includes all fortune types add free !")
                 .customFont(.footnote)
+                .foregroundColor(.white)
                 .opacity(0.7)
                 .frame(width: 366)
+            
             
         }
         .padding(40)
@@ -135,5 +184,8 @@ struct OnboardingView: View {
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView(show: .constant(true))
+            .environmentObject(LoginViewModel())
+            .environmentObject(RegisterViewModel())
+            
     }
 }

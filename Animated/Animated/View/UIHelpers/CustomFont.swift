@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
 
 struct CustomFont: ViewModifier {
     var textStyle: TextStyle
